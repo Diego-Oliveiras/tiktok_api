@@ -98,3 +98,8 @@ def get_my_videos(request: Request):
 @app.get("/")
 def read_root():
     return {"message": "Hello World"}
+
+
+@app.post('/webhook')
+def webhook():
+    return Request.json()

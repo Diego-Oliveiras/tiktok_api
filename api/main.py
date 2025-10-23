@@ -31,7 +31,7 @@ def login_tiktok():
 # ======================================================================
 # 2️⃣ Callback: TikTok redireciona pra cá com ?code=...  e ?state=...
 # ======================================================================
-@app.get("/auth/tiktok/callback", methods=["GET", "POST"])
+@app.api_route("/auth/tiktok/callback", methods=["GET", "POST"])
 def auth_callback(request: Request, code: str = None, state: str = None):
     if not code:
         return JSONResponse({"error": "Código de autorização ausente."}, status_code=400)

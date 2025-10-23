@@ -94,3 +94,7 @@ def get_my_videos(request: Request):
     }, json=body).json()
 
     return JSONResponse(video_resp)
+
+@app.get("/")
+def read_root():
+    return {"message": "Hello World"}

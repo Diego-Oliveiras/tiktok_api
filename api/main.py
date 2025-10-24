@@ -142,6 +142,17 @@ async def webhook(request: Request):
     return JSONResponse({"received": body})
 
 
-@app.get("/dns.txt")
-async def dns():
-    return "tiktok-developers-site-verification=5hANhqHfFHGxT3t3RVaZ10Tt4njvWa3E"
+@app.get("/tiktok-verification.html")
+def serve_tiktok_verification():
+    """
+    Serve o arquivo exigido pelo TikTok para verificar o domínio.
+    O TikTok acessará algo como:
+    https://tiktok-api-henna.vercel.app/tiktok-verification.html
+    """
+    # Caminho absoluto até o arquivo (na mesma pasta deste main.py)
+    base_dir = os.path.dirname(os.path.abspath(__file__))
+    file_path = os.path.join(base_dir, "tiktok-verification.html")
+
+    # Verifica se o arquivo existe
+    if os.path.exists(file_path):
+        return FileResponse(file_path, media_type="text/html")

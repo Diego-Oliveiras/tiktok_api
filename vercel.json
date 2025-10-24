@@ -1,9 +1,11 @@
 {
   "version": 2,
   "builds": [
-    { "src": "api/main.py", "use": "@vercel/python" }
+    { "src": "api/main.py", "use": "@vercel/python" },
+    { "src": "api/tiktok-verification.html", "use": "@vercel/static" }
   ],
   "routes": [
+    { "src": "/tiktok-verification.html", "dest": "/api/tiktok-verification.html" },
     { "src": "/(.*)", "dest": "/api/main.py" }
   ]
 }

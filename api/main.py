@@ -151,7 +151,7 @@ def serve_tiktok_verification():
     """
     # Caminho absoluto até o arquivo (na mesma pasta deste main.py)
     base_dir = os.path.dirname(os.path.abspath(__file__))
-    file_path = os.path.join(base_dir, "tiktok-verification.html")
+    file_path = os.path.join(base_dir, "tiktokwF4NstLzn3GvEEgMtbCnpG9tPV9RAotO.txt")
 
     # Verifica se o arquivo existe
     if os.path.exists(file_path):

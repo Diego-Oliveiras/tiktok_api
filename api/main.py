@@ -79,56 +79,39 @@ def auth_callback(request: Request, code: str = None, state: str = None):
 # 3️⃣ Rota para listar vídeos do usuário
 # ==========================================
 @app.get("/me/videos")
-def get_my_videos(request: Request):
+def me_videos(request: Request):
     access_token = request.session.get("access_token")
     if not access_token:
-        return JSONResponse(
-            {"error": "Você precisa se autenticar primeiro."}, status_code=401
-        )
+        return JSONResponse({"error": "Faça login primeiro"}, status_code=401)
 
-    # 🧩 1. Obter open_id
-    user_info_url = "https://open.tiktokapis.com/v2/user/info/"
     headers = {"Authorization": f"Bearer {access_token}"}
-    body = {"fields": ["open_id", "display_name"]}
 
-    user_resp = requests.post(user_info_url, headers=headers, json=body).json()
+    try:
+        # 🧩 1. Obter user info
+        user_info_url = "https://open.tiktokapis.com/v2/user/info/?fields=open_id,display_name"
+        user_resp = requests.get(user_info_url, headers=headers).json()
+        print("🪵 USER INFO:", user_resp)
 
-    user_data = user_resp.get("data", {}).get("user", {})
-    open_id = user_data.get("open_id")
+        open_id = user_resp.get("data", {}).get("user", {}).get("open_id")
+        if not open_id:
+            return JSONResponse({
+                "error": "Não foi possível obter open_id",
+                "details": user_resp
+            }, status_code=400)
 
-    if not open_id:
-        return JSONResponse(
-            {"error": "Não foi possível obter open_id", "details": user_resp},
-            status_code=400,
-        )
+        # 🧩 2. Buscar vídeos
+        video_url = "https://open.tiktokapis.com/v2/video/list/"
+        params = {"fields": "id,title,create_time,like_count,comment_count"}
+        body = {"max_count": 10}
+        video_resp = requests.post(video_url, headers=headers, params=params, json=body).json()
 
-    # 🧩 2. Buscar vídeos
-    video_url = "https://open.tiktokapis.com/v2/video/list/"
-    body = {
-        "open_id": open_id,
-        "cursor": 0,
-        "count": 10,
-        "fields": [
-            "id",
-            "video_description",
-            "create_time",
-            "like_count",
-            "comment_count",
-            "share_count",
-            "embed_link",
-        ],
-    }
-    video_resp = requests.post(
-        video_url,
-        headers={
-            "Authorization": f"Bearer {access_token}",
-            "Content-Type": "application/json",
-        },
-        json=body,
-    ).json()
+        print("🪵 VIDEO RESP:", video_resp)
+        return JSONResponse(video_resp)
 
-    return JSONResponse(video_resp)
-
+    except Exception as e:
+        import traceback
+        print("❌ ERRO:", traceback.format_exc())
+        return JSONResponse({"error": str(e)}, status_code=500)
 # ==========================================
 # 4️⃣ Raiz e Webhook (teste)
 # ==========================================

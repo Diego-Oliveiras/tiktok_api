@@ -1,6 +1,6 @@
 # app.py
 from fastapi import FastAPI, Request
-from fastapi.responses import RedirectResponse, JSONResponse
+from fastapi.responses import RedirectResponse, JSONResponse,PlainTextResponse
 from fastapi.responses import FileResponse
 
 from starlette.middleware.sessions import SessionMiddleware
@@ -145,14 +145,22 @@ async def webhook(request: Request):
 @app.get("/tiktok-verification.html")
 def serve_tiktok_verification():
     """
-    Serve o arquivo exigido pelo TikTok para verificar o domínio.
-    O TikTok acessará algo como:
-    https://tiktok-api-henna.vercel.app/tiktok-verification.html
+    Serve o conteúdo de verificação exigido pelo TikTok.
     """
-    # Caminho absoluto até o arquivo (na mesma pasta deste main.py)
+    # Diretório atual (onde está o main.py)
     base_dir = os.path.dirname(os.path.abspath(__file__))
-    file_path = os.path.join(base_dir, "tiktokwF4NstLzn3GvEEgMtbCnpG9tPV9RAotO.txt")
+    
+    # Sobe um nível (da pasta /api para a raiz do projeto)
+    root_dir = os.path.dirname(base_dir)
+    
+    # Caminho completo até o arquivo
+    file_path = os.path.join(root_dir, "tiktokwF4NstLzn3GvEEgMtbCnpG9tPV9RAotO.txt")
 
-    # Verifica se o arquivo existe
+    # Se o arquivo existe, retorna o conteúdo puro
     if os.path.exists(file_path):
-        return FileResponse(file_path, media_type="text/html")
+        with open(file_path, "r", encoding="utf-8") as f:
+            content = f.read().strip()
+        return PlainTextResponse(content, media_type="text/plain")
+
+    # Caso não exista
+    return PlainTextResponse("Arquivo de verificação não encontrado.", status_code=404)

@@ -1,6 +1,8 @@
 # app.py
 from fastapi import FastAPI, Request
 from fastapi.responses import RedirectResponse, JSONResponse
+from fastapi.responses import FileResponse
+
 from starlette.middleware.sessions import SessionMiddleware
 import requests, os, urllib.parse
 from dotenv import load_dotenv
@@ -138,3 +140,11 @@ def read_root():
 async def webhook(request: Request):
     body = await request.json()
     return JSONResponse({"received": body})
+
+
+@app.get("/dns.txt")
+async def dns():
+    file_path = "dns.txt"  # Caminho para o arquivo dns.txt
+    if os.path.exists(file_path):
+        return FileResponse(file_path)
+    return {"error": "File not found"}

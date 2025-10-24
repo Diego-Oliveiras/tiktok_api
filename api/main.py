@@ -144,7 +144,4 @@ async def webhook(request: Request):
 
 @app.get("/dns.txt")
 async def dns():
-    file_path = "dns.txt"  # Caminho para o arquivo dns.txt
-    if os.path.exists(file_path):
-        return FileResponse(file_path)
-    return {"error": "File not found"}
+    return "tiktok-developers-site-verification=5hANhqHfFHGxT3t3RVaZ10Tt4njvWa3E"

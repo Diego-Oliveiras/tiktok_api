@@ -164,3 +164,27 @@ def serve_tiktok_verification():
 
     # Caso não exista
     return PlainTextResponse("Arquivo de verificação não encontrado.", status_code=404)
+
+
+@app.get("/tiktok-verification")
+def serve_tiktok_verification_x():
+    """
+    Serve o conteúdo de verificação exigido pelo TikTok.
+    """
+    # Diretório atual (onde está o main.py)
+    base_dir = os.path.dirname(os.path.abspath(__file__))
+    
+    # Sobe um nível (da pasta /api para a raiz do projeto)
+    root_dir = os.path.dirname(base_dir)
+    
+    # Caminho completo até o arquivo
+    file_path = os.path.join(root_dir, "tiktokwF4NstLzn3GvEEgMtbCnpG9tPV9RAotO.txt")
+
+    # Se o arquivo existe, retorna o conteúdo puro
+    if os.path.exists(file_path):
+        with open(file_path, "r", encoding="utf-8") as f:
+            content = f.read().strip()
+        return PlainTextResponse(content, media_type="text/plain")
+
+    # Caso não exista
+    return PlainTextResponse("Arquivo de verificação não encontrado.", status_code=404)
